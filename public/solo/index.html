@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <div id="banner" class="banner is-hidden"></div>
+
+  <div class="top-bar">
+    <div class="top-left">
+      <a href="../index.html" class="home-link">&larr; Home</a>
+
+      <div class="customize-widget">
+        <button id="customizeToggle" class="customize-toggle" type="button" aria-label="Customize snake">&#9881;&#65039;</button>
+
+        <div id="customizePanel" class="customize-panel is-hidden">
+          <label for="bodyColorInput">Body color</label>
+          <input type="color" id="bodyColorInput" value="#81a2be" />
+
+          <label for="headEmojiInput">Head emoji</label>
+          <input type="text" id="headEmojiInput" maxlength="4" placeholder="&#128013;" />
+        </div>
+      </div>
+    </div>
+
+    <div id="score" class="counter">Score: 0</div>
+  </div>
+
+  <div class="content-wrap">
+    <main class="game">
+
+      <h1>Snake</h1>
+
+      <div class="board-wrap">
+        <canvas id="board" width="480" height="480"></canvas>
+
+        <div id="overlay" class="overlay is-hidden">
+          <p id="overlayMessage"></p>
+          <button id="restartButton" type="button">Play Again</button>
+        </div>
+      </div>
+
+      <p class="hint">Arrow keys or WASD to move &middot; Space to restart</p>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
