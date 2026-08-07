@@ -15,8 +15,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 const TICK_RATE = 30; // simulation & broadcast ticks per second
 const TICK_MS = 1000 / TICK_RATE;
 
-const WORLD_WIDTH = 3000; // bounded, wrap-around world (no infinite space to get lost in)
-const WORLD_HEIGHT = 2000;
+const WORLD_WIDTH = 2000; // bounded, wrap-around world (no infinite space to get lost in)
+const WORLD_HEIGHT = 1400; // sized for a ~15-20 player classroom; still feels fine with just 1-2
 
 const BASE_SPEED = 125; // units/sec
 const TURN_RATE = 4.2; // radians/sec, how fast a snake can steer
@@ -32,13 +32,14 @@ const SNAKE_RADIUS = 9;
 const FOOD_RADIUS = 5;
 const DEATH_FOOD_RADIUS = FOOD_RADIUS + 10; // noticeably bigger/wider than ambient food
 
-const FOOD_TARGET_COUNT = 260;
+const FOOD_TARGET_COUNT = 130; // scaled down to match the smaller world's area
 const FOOD_SPAWN_PER_TICK = 3; // max ambient food spawned per tick while below target
 
 const SPAWN_INVULN_MS = 2000; // brief safety window after (re)spawning
-const MIN_SPAWN_DIST_FROM_OTHERS = 180;
+const MIN_SPAWN_DIST_FROM_OTHERS = 150;
 
 const MAX_NAME_LENGTH = 16;
+const MAX_EMOJI_LENGTH = 8; // generous enough for multi-codepoint emoji (skin tones, ZWJ sequences)
 const LEADERBOARD_SIZE = 10;
 
 // ---------------------------------------------------------------------------
@@ -110,11 +111,20 @@ function sanitizeName(rawName) {
   return name.length > 0 ? name : 'Player';
 }
 
+function sanitizeColor(rawColor) {
+  return typeof rawColor === 'string' && /^#[0-9a-fA-F]{6}$/.test(rawColor) ? rawColor : '#4cc9f0';
+}
+
+function sanitizeEmoji(rawEmoji) {
+  return String(rawEmoji || '').trim().slice(0, MAX_EMOJI_LENGTH);
+}
+
 class Player {
-  constructor(id, name, color) {
+  constructor(id, name, color, emoji) {
     this.id = id;
     this.name = name;
     this.color = color;
+    this.emoji = emoji;
     this.score = 0;
     this.alive = true;
     this.respawn(true);
@@ -200,10 +210,11 @@ class Player {
 // Socket handling
 // ---------------------------------------------------------------------------
 io.on('connection', (socket) => {
-  socket.on('join', ({ name, color }) => {
+  socket.on('join', ({ name, color, emoji }) => {
     const safeName = sanitizeName(name);
-    const safeColor = typeof color === 'string' && /^#[0-9a-fA-F]{6}$/.test(color) ? color : '#4cc9f0';
-    const player = new Player(socket.id, safeName, safeColor);
+    const safeColor = sanitizeColor(color);
+    const safeEmoji = sanitizeEmoji(emoji);
+    const player = new Player(socket.id, safeName, safeColor, safeEmoji);
     players.set(socket.id, player);
     socket.emit('joined', { id: socket.id, worldWidth: WORLD_WIDTH, worldHeight: WORLD_HEIGHT });
   });
@@ -213,6 +224,13 @@ io.on('connection', (socket) => {
     if (player && player.alive) {
       player.applyInput(data && data.angle);
     }
+  });
+
+  socket.on('customize', (data) => {
+    const player = players.get(socket.id);
+    if (!player) return;
+    if (data && data.color !== undefined) player.color = sanitizeColor(data.color);
+    if (data && data.emoji !== undefined) player.emoji = sanitizeEmoji(data.emoji);
   });
 
   socket.on('disconnect', () => {
@@ -308,6 +326,7 @@ function broadcastState() {
       id: p.id,
       name: p.name,
       color: p.color,
+      emoji: p.emoji,
       score: p.score,
       invulnerable: p.isInvulnerable(),
       segments: p.segments.map((s) => [

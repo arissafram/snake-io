@@ -15,15 +15,42 @@
   </div>
 
   <div id="hud" class="hidden">
+    <div class="customize-widget">
+      <button id="customizeToggle" class="customize-toggle" type="button" aria-label="Customize snake">&#9881;&#65039;</button>
+      <div id="customizePanel" class="customize-panel is-hidden">
+        <label for="bodyColorInput">Body color</label>
+        <input type="color" id="bodyColorInput" />
+
+        <label for="headEmojiInput">Head emoji</label>
+        <input type="text" id="headEmojiInput" maxlength="4" placeholder="&#128013;" />
+      </div>
+    </div>
     <span id="score-display">Score: 0</span>
+  </div>
+
+  <div id="zoom-controls" class="hidden">
+    <button id="zoomOutBtn" type="button" aria-label="Zoom out">&minus;</button>
+    <button id="zoomResetBtn" type="button" aria-label="Reset zoom">Reset</button>
+    <button id="zoomInBtn" type="button" aria-label="Zoom in">+</button>
   </div>
 
   <div id="join-screen" class="overlay">
     <div class="panel join-panel">
       <h1>Classroom Snake</h1>
-      <p>Same rules as slither.io, but the whole class is in one room. Move your mouse to steer. Eat food to grow. Don't run into anyone!</p>
+      <p>Same rules as slither.io, but the whole class is in one room. Move your mouse to steer. Eat food to grow. Don't run into anyone! Scroll or pinch to zoom out and see everyone.</p>
       <input id="name-input" type="text" maxlength="16" placeholder="Your name" autocomplete="off" />
-      <div id="color-swatches"></div>
+
+      <div class="customize-row">
+        <div class="customize-field">
+          <label for="joinColorInput">Body color</label>
+          <input type="color" id="joinColorInput" />
+        </div>
+        <div class="customize-field">
+          <label for="joinEmojiInput">Head emoji</label>
+          <input type="text" id="joinEmojiInput" maxlength="4" placeholder="&#128013;" />
+        </div>
+      </div>
+
       <button id="play-button">Play</button>
     </div>
   </div>
