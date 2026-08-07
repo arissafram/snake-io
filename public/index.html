@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classroom Snake</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div id="leaderboard" class="panel hidden">
+    <h2>Leaderboard</h2>
+    <ol id="leaderboard-list"></ol>
+  </div>
+
+  <div id="hud" class="hidden">
+    <span id="score-display">Score: 0</span>
+  </div>
+
+  <div id="join-screen" class="overlay">
+    <div class="panel join-panel">
+      <h1>Classroom Snake</h1>
+      <p>Same rules as slither.io, but the whole class is in one room. Move your mouse to steer. Eat food to grow. Don't run into anyone!</p>
+      <input id="name-input" type="text" maxlength="16" placeholder="Your name" autocomplete="off" />
+      <div id="color-swatches"></div>
+      <button id="play-button">Play</button>
+    </div>
+  </div>
+
+  <div id="death-screen" class="overlay hidden">
+    <div class="panel">
+      <h1>You died!</h1>
+      <p id="final-score"></p>
+      <button id="respawn-button">Play Again</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
