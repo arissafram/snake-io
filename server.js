@@ -18,18 +18,19 @@ const TICK_MS = 1000 / TICK_RATE;
 const WORLD_WIDTH = 3000; // bounded, wrap-around world (no infinite space to get lost in)
 const WORLD_HEIGHT = 2000;
 
-const BASE_SPEED = 95; // units/sec
+const BASE_SPEED = 125; // units/sec
 const TURN_RATE = 4.2; // radians/sec, how fast a snake can steer
 
 const SEGMENT_SPACING = 10; // world units between body segments
 const START_SEGMENTS = 8;
 const GROWTH_PER_FOOD = 2; // segments gained per normal food
-const SCORE_PER_FOOD = 10;
+const SCORE_PER_FOOD = 2;
+const DEATH_FOOD_SCORE = 5;
 
 const HEAD_RADIUS = 10;
 const SNAKE_RADIUS = 9;
 const FOOD_RADIUS = 5;
-const DEATH_FOOD_RADIUS = 7;
+const DEATH_FOOD_RADIUS = FOOD_RADIUS + 10; // noticeably bigger/wider than ambient food
 
 const FOOD_TARGET_COUNT = 260;
 const FOOD_SPAWN_PER_TICK = 3; // max ambient food spawned per tick while below target
@@ -231,7 +232,7 @@ function killPlayer(player) {
       x: wrapCoord(seg.x, WORLD_WIDTH),
       y: wrapCoord(seg.y, WORLD_HEIGHT),
       r: DEATH_FOOD_RADIUS,
-      value: Math.round(SCORE_PER_FOOD * 1.5),
+      value: DEATH_FOOD_SCORE,
       growth: GROWTH_PER_FOOD + 1,
       color: player.color,
     });

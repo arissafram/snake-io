@@ -15,6 +15,11 @@
   const leaderboardListEl = document.getElementById('leaderboard-list');
   const hudEl = document.getElementById('hud');
   const scoreDisplayEl = document.getElementById('score-display');
+  const deathHeadingEl = document.getElementById('death-heading');
+  const countdownScreen = document.getElementById('countdown-screen');
+  const countdownNumberEl = document.getElementById('countdown-number');
+
+  const DEATH_MESSAGES = ["noooo you died", "oof couldn't keep up", "rip, better luck next time"];
 
   const COLORS = ['#4cc9f0', '#f72585', '#ffd166', '#06d6a0', '#b5179e', '#f77f00', '#90e0ef', '#ef476f'];
   let selectedColor = COLORS[0];
@@ -54,13 +59,34 @@
     socket.emit('join', { name, color: selectedColor });
   }
 
-  playButton.addEventListener('click', doJoin);
+  function runCountdown(onComplete) {
+    let n = 3;
+    countdownNumberEl.textContent = n;
+    countdownScreen.classList.remove('hidden');
+    const interval = setInterval(() => {
+      n -= 1;
+      if (n <= 0) {
+        clearInterval(interval);
+        countdownScreen.classList.add('hidden');
+        onComplete();
+      } else {
+        countdownNumberEl.textContent = n;
+      }
+    }, 800);
+  }
+
+  function beginJoinFlow() {
+    joinScreen.classList.add('hidden');
+    runCountdown(doJoin);
+  }
+
+  playButton.addEventListener('click', beginJoinFlow);
   nameInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') doJoin();
+    if (e.key === 'Enter') beginJoinFlow();
   });
   respawnButton.addEventListener('click', () => {
     deathScreen.classList.add('hidden');
-    joinScreen.classList.remove('hidden');
+    runCountdown(doJoin);
   });
 
   socket.on('joined', (data) => {
@@ -77,6 +103,7 @@
   socket.on('died', (data) => {
     alive = false;
     myId = null;
+    deathHeadingEl.textContent = DEATH_MESSAGES[Math.floor(Math.random() * DEATH_MESSAGES.length)];
     finalScoreEl.textContent = `Final score: ${data.score}`;
     leaderboardEl.classList.add('hidden');
     hudEl.classList.add('hidden');
@@ -140,18 +167,17 @@
     return d;
   }
 
-  function drawGrid(camX, camY) {
+  function drawGrid() {
+    // Fixed to the screen (not the camera/world) so the background never appears to drift.
     const spacing = 100;
     ctx.strokeStyle = 'rgba(255,255,255,0.05)';
     ctx.lineWidth = 1;
-    const startX = -((camX % spacing) + spacing) % spacing;
-    const startY = -((camY % spacing) + spacing) % spacing;
     ctx.beginPath();
-    for (let x = startX; x < canvas.width; x += spacing) {
+    for (let x = 0; x < canvas.width; x += spacing) {
       ctx.moveTo(x, 0);
       ctx.lineTo(x, canvas.height);
     }
-    for (let y = startY; y < canvas.height; y += spacing) {
+    for (let y = 0; y < canvas.height; y += spacing) {
       ctx.moveTo(0, y);
       ctx.lineTo(canvas.width, y);
     }
@@ -173,7 +199,7 @@
     const camX = me ? me.segments[0][0] : worldWidth / 2;
     const camY = me ? me.segments[0][1] : worldHeight / 2;
 
-    drawGrid(camX, camY);
+    drawGrid();
 
     // Food
     for (const [fx, fy, r, color] of latestState.food) {

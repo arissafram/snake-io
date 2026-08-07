@@ -29,11 +29,15 @@
   </div>
 
   <div id="death-screen" class="overlay hidden">
-    <div class="panel">
-      <h1>You died!</h1>
+    <div class="death-message">
+      <h1 id="death-heading">You died!</h1>
       <p id="final-score"></p>
       <button id="respawn-button">Play Again</button>
     </div>
+  </div>
+
+  <div id="countdown-screen" class="overlay hidden">
+    <div id="countdown-number">3</div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>

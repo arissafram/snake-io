@@ -38,6 +38,7 @@ html, body {
   right: 16px;
   width: 200px;
   padding: 14px 18px;
+  z-index: 5;
 }
 
 #leaderboard h2 {
@@ -69,6 +70,14 @@ html, body {
   background: rgba(20, 24, 34, 0.7);
   padding: 8px 14px;
   border-radius: 8px;
+  z-index: 5;
+}
+
+#game {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
 }
 
 .overlay {
@@ -78,7 +87,7 @@ html, body {
   align-items: center;
   justify-content: center;
   background: rgba(10, 12, 18, 0.75);
-  z-index: 10;
+  z-index: 20;
 }
 
 .join-panel {
@@ -144,12 +153,31 @@ html, body {
   filter: brightness(1.1);
 }
 
-#death-screen h1 {
+.death-message {
+  text-align: center;
+}
+
+.death-message h1 {
   color: #ef476f;
-  margin-top: 0;
+  margin: 0 0 12px 0;
+  font-size: 48px;
+  font-weight: 800;
+  text-shadow: 0 4px 24px rgba(239, 71, 111, 0.5);
 }
 
 #final-score {
-  font-size: 16px;
+  font-size: 18px;
   color: #ffd166;
+  margin-bottom: 18px;
+}
+
+.death-message #respawn-button {
+  width: 220px;
+}
+
+#countdown-number {
+  font-size: 160px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(76, 201, 240, 0.8);
 }
